@@ -45,3 +45,9 @@ Read more about invoking the function in [the Cargo Lambda documentation for the
 To deploy the project, run `cargo lambda deploy`. This will create an IAM role and a Lambda function in your AWS account.
 
 Read more about deploying your lambda function in [the Cargo Lambda documentation](https://www.cargo-lambda.info/commands/deploy.html).
+
+
+# TODO
+
+- Structured and/or non-sturctured logging based on AWS system logging configuration
+- Add logo to project

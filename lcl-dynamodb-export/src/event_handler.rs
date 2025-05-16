@@ -14,7 +14,7 @@ pub(crate) async fn function_handler(event: LambdaEvent<CloudWatchEvent>) -> Res
     // Extract some useful information from the request
     tracing::info!("Starting");
     let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
-    let client = aws_sdk_dynamodb::Client::new(&config);
+    let client = Client::new(&config);
 
     let table_name = env::var("LCL_EXPORT_TABLE_NAME")
         .context("Environment variable LCL_EXPORT_TABLE_NAME not set")?;
@@ -44,6 +44,7 @@ pub(crate) async fn function_handler(event: LambdaEvent<CloudWatchEvent>) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
     use lambda_runtime::{Context, LambdaEvent};
 
     #[tokio::test]

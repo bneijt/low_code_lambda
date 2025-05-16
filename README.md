@@ -3,6 +3,16 @@ Low Code Lambda
 AWS Lambda containers that are ready to use for small orchestraiton tasks. Parameterized via environment variables.
 
 
+# Implementations
+
+In development:
+- DynamoDB export: trigger dynamodb export to S3 based on eventbridge trigger
+
+In roadmap:
+- Logrotate: apply rules to move S3 files at create into partitioned/stored data.
+
+
+
 ## Building
 
 To build the project for production, run `cargo lambda build --release`. Remove the `--release` flag to build for development.

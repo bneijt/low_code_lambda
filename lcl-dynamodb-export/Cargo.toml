@@ -8,6 +8,7 @@ description = "Trigger DynamoDB table export to S3"
 anyhow = "1.0.98"
 async-trait = "0.1.88"
 aws-config = "1.6.1"
+aws-sdk-cloudwatchevents = "1.67.0"
 aws-sdk-dynamodb = "1.71.2"
 aws_lambda_events = { version = "0.15.1", default-features = false, features = [
     "cloudwatch_events",

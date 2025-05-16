@@ -1,0 +1,17 @@
+[package]
+name = "lcl-dynamodb-export"
+version = "0.1.0"
+edition = "2024"
+description = "Trigger DynamoDB table export to S3"
+
+[dependencies]
+anyhow = "1.0.98"
+async-trait = "0.1.88"
+aws-config = "1.6.1"
+aws-sdk-dynamodb = "1.71.2"
+aws_lambda_events = { version = "0.15.1", default-features = false, features = [
+    "cloudwatch_events",
+] }
+lambda_runtime = "0.13.0"
+serde = "1.0.219"
+tokio = { version = "1", features = ["macros"] }

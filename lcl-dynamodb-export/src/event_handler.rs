@@ -2,28 +2,30 @@ use anyhow::{Context, Result};
 use aws_config::{BehaviorVersion, load_defaults};
 use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 use aws_sdk_dynamodb::Client;
-use lambda_runtime::{LambdaEvent, tracing};
-use std::env;
+use lambda_runtime::{Error, LambdaEvent, run, service_fn, tracing};
+
+use std::env::{self, VarError};
 
 /// This is the main body for the function.
 /// Write your code inside it.
 /// There are some code example in the following URLs:
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
 /// - https://github.com/aws-samples/serverless-rust-demo/
-pub(crate) async fn function_handler(event: LambdaEvent<CloudWatchEvent>) -> Result<()> {
+pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<String, Error> {
     // Extract some useful information from the request
     tracing::info!("Starting");
     let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let client = Client::new(&config);
 
-    let table_name = env::var("LCL_EXPORT_TABLE_NAME")
-        .context("Environment variable LCL_EXPORT_TABLE_NAME not set")?;
-    let export_arn = format!("arn:aws:s3:::table-exports");
+    let table_arn = require_env("LCL_DYNDB_EXPORT_TABLE_ARN")?;
+    let export_s3_bucket = require_env("LCL_DYNDB_EXPORT_S3_BUCKET")?;
+    let export_s3_prefix = require_env("LCL_DYNDB_EXPORT_S3_PREFIX")?;
 
     let resp = client
         .export_table_to_point_in_time()
-        .table_arn(&table_name)
-        .s3_bucket(&export_arn)
+        .table_arn(&table_arn)
+        .s3_bucket(&export_s3_bucket)
+        .s3_prefix(&export_s3_prefix)
         .send()
         .await
         .context("Failed to initiate table export")?;
@@ -38,19 +40,12 @@ pub(crate) async fn function_handler(event: LambdaEvent<CloudWatchEvent>) -> Res
             println!("Failed to initiate export.");
         }
     }
-    Ok(())
+    Ok("Success".to_string())
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
-    use lambda_runtime::{Context, LambdaEvent};
-
-    #[tokio::test]
-    async fn test_event_handler() {
-        let event = LambdaEvent::new(CloudWatchEvent::default(), Context::default());
-        let response = function_handler(event).await.unwrap();
-        assert_eq!((), response);
-    }
+fn require_env(environment_variable_name: &str) -> anyhow::Result<String> {
+    env::var(environment_variable_name).context(format!(
+        "Environment variable {} is required to configure the low code lambda",
+        environment_variable_name
+    ))
 }

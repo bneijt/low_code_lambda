@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
-RUSTFLAGS='-C target-feature=+crt-static' cargo lambda build --release --output-format binary --package "lcl-dynamodb-export"
+PACKAGES="dynamodb-export"
 
-docker build -f Dockerfile \
-    --tag "lcl-dynamodb-export" \
-    --build-arg PACKAGE=lcl-dynamodb-export \
-    .
+for package in $PACKAGES; do
+    echo "Building $package"
+    RUSTFLAGS='-C target-feature=+crt-static' cargo lambda build --release --output-format binary --package "lcl-${package}"
+    docker build -f Dockerfile \
+        --tag "low_code_lambda/${package}" \
+        --build-arg "PACKAGE=lcl-${package}" \
+        "target/lambda/lcl-${package}"
+done

@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
-cd lcl-dynamodb-export
-docker build -f ../Dockerfile \
-    --platform linux/amd64  \
+cargo lambda build --release --output-format binary --package "lcl-dynamodb-export"
+
+docker build -f Dockerfile \
+    --tag "lcl-dynamodb-export" \
     --build-arg PACKAGE=lcl-dynamodb-export \
-    .
+    target/lambda/

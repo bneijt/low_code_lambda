@@ -51,3 +51,4 @@ Read more about deploying your lambda function in [the Cargo Lambda documentatio
 
 - Structured and/or non-sturctured logging based on AWS system logging configuration
 - Add logo to project
+https://docs.aws.amazon.com/AmazonECR/latest/public/getting-started-cli.html

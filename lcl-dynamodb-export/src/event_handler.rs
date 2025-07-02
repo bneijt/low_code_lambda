@@ -1,10 +1,10 @@
 use anyhow::{Context, Result};
-use aws_config::{BehaviorVersion, load_defaults};
+use aws_config::BehaviorVersion;
 use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 use aws_sdk_dynamodb::Client;
-use lambda_runtime::{Error, LambdaEvent, run, service_fn, tracing};
+use lambda_runtime::{Error, LambdaEvent, tracing};
 
-use std::env::{self, VarError};
+use std::env::{self};
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -32,7 +32,7 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
 
     match resp.export_description {
         Some(description) => {
-            println!("Export initiated successfully!");
+            println!("Export initiated successfully.");
             println!("Export ARN: {:?}", description.export_arn);
             println!("Export status: {:?}", description.export_status);
         }
@@ -45,7 +45,7 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
 
 fn require_env(environment_variable_name: &str) -> anyhow::Result<String> {
     env::var(environment_variable_name).context(format!(
-        "Environment variable {} is required to configure the low code lambda",
+        "Missing required environment variable '{}'",
         environment_variable_name
     ))
 }

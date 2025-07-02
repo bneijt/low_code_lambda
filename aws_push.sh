@@ -2,7 +2,7 @@
 set -e
 
 PACKAGES="dynamodb-export"
-aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/n0i9l8j9
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/n0i9l8j9/low_code_lambda
 
 for package in $PACKAGES; do
     echo "Pushing $package"

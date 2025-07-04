@@ -16,5 +16,7 @@ jobs:
       - uses: google/osv-scanner/actions/scanner@main
         with:
           to-scan: Cargo.toml
-      - run: ./build.sh
+      - run: |
+          pip3 install cargo-lambda
+          ./build.sh
       - run: cargo test --verbose

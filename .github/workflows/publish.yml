@@ -27,12 +27,14 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
+      - run: rustup update stable && rustup default stable
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
           REGISTRY_ALIAS: n0i9l8j9
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          pip3 install cargo-lambda
           ./build.sh
           PACKAGES="dynamodb-export"
 

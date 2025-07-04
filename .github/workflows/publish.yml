@@ -22,7 +22,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::876460094794:role/github-ecr-public-publishing-role
-          aws-region: eu-north-1
+          aws-region: us-east-1
       - name: Login to Amazon ECR Public
         id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v2

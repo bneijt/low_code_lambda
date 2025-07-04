@@ -16,5 +16,5 @@ jobs:
       - uses: google/osv-scanner/actions/scanner@main
         with:
           to-scan: Cargo.toml
-      - run: cargo build --verbose
+      - run: ./build.sh
       - run: cargo test --verbose

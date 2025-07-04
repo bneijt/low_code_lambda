@@ -1,0 +1,43 @@
+name: publish
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      # https://github.com/aws-actions/amazon-ecr-login
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::876460094794:role/github-ecr-public-publishing-role
+          aws-region: eu-north-1
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: n0i9l8j9
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ./build.sh
+          PACKAGES="dynamodb-export"
+
+          for package in $PACKAGES; do
+              echo "Pushing $package"
+              docker tag "low_code_lambda/${package}" public.ecr.aws/${REGISTRY_ALIAS}/low_code_lambda/${package}
+              docker push public.ecr.aws/${REGISTRY_ALIAS}/low_code_lambda/${package}
+          done

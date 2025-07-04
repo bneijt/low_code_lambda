@@ -6,14 +6,9 @@ use lambda_runtime::{Error, LambdaEvent, tracing};
 
 use std::env::{self};
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
-/// - https://github.com/aws-samples/serverless-rust-demo/
 pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<String, Error> {
     // Extract some useful information from the request
-    tracing::info!("Starting");
+    tracing::info!("start");
     let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let client = Client::new(&config);
 
@@ -32,12 +27,12 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
 
     match resp.export_description {
         Some(description) => {
-            println!("Export initiated successfully.");
-            println!("Export ARN: {:?}", description.export_arn);
-            println!("Export status: {:?}", description.export_status);
+            tracing::info!("Export initiated successfully.");
+            tracing::info!("Export ARN: {:?}", description.export_arn);
+            tracing::info!("Export status: {:?}", description.export_status);
         }
         None => {
-            println!("Failed to initiate export.");
+            tracing::error!("Failed to initiate export.");
         }
     }
     Ok("Success".to_string())

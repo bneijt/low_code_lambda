@@ -3,6 +3,7 @@ name = "lcl-dynamodb-export"
 version = "0.1.0"
 edition = "2024"
 description = "Trigger DynamoDB table export to S3"
+authors = ["Bram Neijt <bram@neijt.nl>"]
 
 [dependencies]
 anyhow = "1.0.98"

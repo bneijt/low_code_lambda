@@ -21,6 +21,8 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
         .table_arn(&table_arn)
         .s3_bucket(&export_s3_bucket)
         .s3_prefix(&export_s3_prefix)
+        .export_format(aws_sdk_dynamodb::types::ExportFormat::DynamodbJson)
+        .export_type(aws_sdk_dynamodb::types::ExportType::FullExport)
         .send()
         .await
         .context("Failed to initiate table export")?;
@@ -32,10 +34,10 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
             tracing::info!("Export status: {:?}", description.export_status);
         }
         None => {
-            tracing::error!("Failed to initiate export.");
+            tracing::error!("Failed to initiate export");
         }
     }
-    Ok("Success".to_string())
+    Ok("Tried".to_string())
 }
 
 fn require_env(environment_variable_name: &str) -> anyhow::Result<String> {

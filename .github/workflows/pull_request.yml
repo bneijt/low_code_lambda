@@ -12,5 +12,5 @@ jobs:
       - uses: google/osv-scanner/actions/scanner@main
       - run: |
           pip3 install cargo-lambda
-          ./build.sh
+          cargo lambda build
       - run: cargo test --verbose

@@ -10,6 +10,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     environment: release
+    strategy:
+      matrix:
+        package:
+          - lcl-dynamodb-export
+          - lcl-prune-log-streams
     steps:
       - uses: actions/checkout@v3
       - uses: docker/login-action@v3
@@ -20,7 +25,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: bneijt/lcl-dynamodb-export
+          images: bneijt/${{ matrix.package }}
       - run: rustup update stable && rustup default stable
       - name: build
         run: |
@@ -31,8 +36,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile
-          context: "target/lambda/lcl-dynamodb-export"
-          build-args: "PACKAGE=lcl-dynamodb-export"
+          context: "target/lambda/${{ matrix.package }}"
+          build-args: "PACKAGE=${{ matrix.package }}"
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

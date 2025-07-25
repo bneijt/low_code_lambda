@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PACKAGES="dynamodb-export"
+PACKAGES="dynamodb-export prune-log-streams"
 
 for package in $PACKAGES; do
     echo "Building $package"

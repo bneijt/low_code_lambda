@@ -21,6 +21,10 @@ Read more about building your lambda function in [the Cargo Lambda documentation
 ## Testing
 
 ```bash
+cargo lambda watch
+```
+
+```bash
 cargo lambda invoke --data-example eventbridge-schedule
 ```
 

@@ -4,12 +4,18 @@ on:
   pull_request: {}
 
 jobs:
+  osv-scanner:
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.2.2"
+
   main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - run: rustup update stable && rustup default stable
-      - uses: google/osv-scanner/actions/scanner@main
       - run: |
           pip3 install cargo-lambda
           cargo lambda build

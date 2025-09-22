@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PACKAGES="dynamodb-export"
+PACKAGES="dynamodb-export event-to-s3"
 
 for package in $PACKAGES; do
     echo "Building $package"

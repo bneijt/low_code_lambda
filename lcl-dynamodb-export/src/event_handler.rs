@@ -37,7 +37,7 @@ pub(crate) async fn function_handler(_: LambdaEvent<CloudWatchEvent>) -> Result<
             tracing::error!("Failed to initiate export");
         }
     }
-    Ok("Tried".to_string())
+    Ok("{\"status\":\"ok\"}".to_string())
 }
 
 fn require_env(environment_variable_name: &str) -> anyhow::Result<String> {

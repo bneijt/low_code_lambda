@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
 use aws_config::BehaviorVersion;
 use aws_sdk_s3::Client;
 use lambda_runtime::{LambdaEvent, tracing};
+use serde::Serialize;
 use serde_json::{Value, to_string};
 
 use std::env::{self};
@@ -16,8 +17,13 @@ async fn main() -> Result<(), Error> {
     run(service_fn(function_handler)).await
 }
 
+#[derive(Serialize)]
+struct LambdaEventRecord {
+    context: lambda_runtime::Context,
+    payload: Value,
+}
+
 pub(crate) async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
-    // Extract some useful information from the request
     tracing::info!("start");
     let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let client = Client::new(&config);
@@ -27,6 +33,11 @@ pub(crate) async fn function_handler(event: LambdaEvent<Value>) -> Result<String
     let now = Utc::now();
     let partition = format!("{}", now.format("%Y-%m-%d"));
 
+    let event_record = LambdaEventRecord {
+        context: event.context.clone(),
+        payload: event.payload.clone(),
+    };
+
     client
         .put_object()
         .bucket(export_s3_bucket)
@@ -35,7 +46,7 @@ pub(crate) async fn function_handler(event: LambdaEvent<Value>) -> Result<String
             export_s3_prefix, partition, event.context.request_id
         ))
         .body(
-            to_string(&event.into_parts())
+            to_string(&event_record)
                 .expect("Should be able to serialize event")
                 .into_bytes()
                 .into(),
@@ -43,8 +54,7 @@ pub(crate) async fn function_handler(event: LambdaEvent<Value>) -> Result<String
         .send()
         .await
         .context("Failed trying to put event on s3")?;
-    // Store tje lambda event as json in s3
-    Ok("Ok".to_string())
+    Ok("{\"status\":\"ok\"}".to_string())
 }
 
 fn require_env(environment_variable_name: &str) -> anyhow::Result<String> {

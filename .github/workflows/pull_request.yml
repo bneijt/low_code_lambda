@@ -19,4 +19,4 @@ jobs:
       - run: |
           pip3 install cargo-lambda
           cargo lambda build
-      - run: cargo test --verbose
+      - run: cargo test
